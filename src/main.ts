@@ -49,7 +49,7 @@ La funzione deve restituire un array contenente elementi di tipo Actress oppure 
 
 */
 
-type person = {
+type Person = {
 
   readonly id: number;
   readonly name: string;
@@ -60,9 +60,26 @@ type person = {
 
 }
 
-type actress = person & {
+type Actress = Person & {
   most_famous_movies: [string, string, string];
   awards: string;
   nationality: ("American" | "British" | "Australian" | "Israeli-American" | "South African" | "French" | "Indian" | "Israeli" | "Spanish" | "South Korean" | "Chinese")
 
+}
+
+async function getActress(id: number): Promise<Actress | null> {
+  try {
+
+    const response = await fetch(`http://localhost:3333/actresses/${id}`) // la type inference si occupa già di determinare che la fetch restituisce un oggetto di tipo response, quindi non devo scrivere const response: response = await fetch
+    const actressDates = await response.json
+
+  }
+
+  catch (error) {
+    console.error("errore nel recupero dati", error)
+  }
+
+  finally {
+    console.log("operazione completata")
+  }
 }
