@@ -114,12 +114,15 @@ async function getActress(id: number): Promise<Actress | null> {
     const datiAttrici: unknown = await response.json()
 
     if (!response.ok) {
-      throw new Error(`Errore HTTP ${response.status}: ${response.statusText}`)
+      throw new Error(`Errore HTTP ${response.status}: ${response.statusText}`) //questo serve perché se usi la funzione built in fetch in JS/TS vanilla, non è in grado di gestire gli status HTTP “non ok” in maniera automatica non generando le eccezioni da solo.
+      // mentre con axios, invece, è in grado già di gestire gli status 404/500 etc, bloccando il flusso se venisse rilevato, e la chiamata fallirebbe già con un errore, quindi il throw non sarebbe necessario.
     }
 
     if (!isActress(datiAttrici)) {
-      throw new Error("formato dati non valido")
-    }
+      throw new Error("formato dati non valido") //questo serve perché anche se in TypeScript non ti obbliga a verificare il tipo, potresti lasciare i dati ricevuti da una fetch con tipo "any" (response.json() ritorna any di default, perché TypeScript non sa che forma avranno i dati) ma è una bad practice, perché disattiva il controllo sui tipi di TS,
+      //  quindi per questo si fa il type narrowing per validare i dati ricevuti prima di restituirli, e a garantire che il tipo Actress sia effettivamente rispettato. 
+      // Al contrario In JS, senza TypeScript non avresti bisogno di questo throw, perché non c’è controllo di tipo rigoroso.
+    } // Quindi, senza type narrowing, datiAttrici viene trattato come any → puoi leggere qualsiasi proprietà senza errori TS, ma perdi sicurezza dei tipi.
 
     return datiAttrici
 
