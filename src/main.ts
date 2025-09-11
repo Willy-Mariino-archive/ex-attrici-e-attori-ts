@@ -109,7 +109,7 @@ async function getActress(id: number): Promise<Actress | null> {
       throw new Error(`Errore HTTP ${response.status}: ${response.statusText}`)
     }
 
-    const datiAttrici = await response.json()
+    const datiAttrici: unknown = await response.json()
 
     if (!isActress(datiAttrici)) {
       throw new Error("formato dati non valido")
@@ -152,13 +152,18 @@ async function getAllActresses(): Promise<Actress[]> {
       throw new Error(`Errore HTTP ${response.status}: ${response.statusText}`)
     }
 
-    const datiAttrici = await response.json()
+    const datiAttrici: unknown = await response.json()
 
     if (!isActress(datiAttrici)) {
       throw new Error("formato dati non valido")
     }
 
-    return datiAttrici
+    if (!(datiAttrici instanceof Array)) {
+      throw new Error("formato dei dati non valido, non è un array")
+    }
+    const validActress: Actress[] = datiAttrici.filter(isActress)
+
+    return validActress
 
 
 
