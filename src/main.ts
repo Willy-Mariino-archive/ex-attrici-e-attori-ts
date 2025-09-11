@@ -83,15 +83,14 @@ function isActress(datiAttrici: unknown): datiAttrici is Actress {
     "birth_year" in datiAttrici &&
     typeof datiAttrici.birth_year === "number" &&
 
-    "death_year" in datiAttrici &&
-    typeof datiAttrici.death_year === "number" &&
+    (!("death_year" in datiAttrici) || typeof datiAttrici.death_year === "number") &&
 
     "biography" in datiAttrici &&
-    typeof datiAttrici.biography &&
+    typeof datiAttrici.biography === "string" &&
 
 
     "image" in datiAttrici &&
-    typeof datiAttrici.image &&
+    typeof datiAttrici.image === "string" &&
 
     "most_famous_movies" in datiAttrici &&
     datiAttrici.most_famous_movies instanceof Array &&
@@ -188,5 +187,5 @@ async function getAllActresses(): Promise<Actress[]> {
 
 (async () => {
   const attrice = await getAllActresses()
-  console.log("dati attrice", attrice)
+  console.log("tutte le attrici", attrice)
 })()
