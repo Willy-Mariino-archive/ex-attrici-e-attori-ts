@@ -81,9 +81,10 @@ function isActress(datiAttrici: unknown): datiAttrici is Actress {
     typeof datiAttrici.name === "string" &&
 
     "birth_year" in datiAttrici &&
-    typeof datiAttrici.birth_year === "number" &&
+    typeof datiAttrici.birth_year === "number" && // per non dare errore, qui la proprietà birth_year deve esistere E deve essere un number (&&)
 
-    (!("death_year" in datiAttrici) || typeof datiAttrici.death_year === "number") &&
+    (!("death_year" in datiAttrici) ||
+      typeof datiAttrici.death_year === "number") && // mentre qui per essere true deve: deve non esistere OPPURE essere number (||)
 
     "biography" in datiAttrici &&
     typeof datiAttrici.biography === "string" &&
@@ -189,3 +190,20 @@ async function getAllActresses(): Promise<Actress[]> {
   const attrice = await getAllActresses()
   console.log("tutte le attrici", attrice)
 })()
+
+async function getActresses(ids: number[]): Promise<(Actress | null)[]> {
+  try {
+
+    const promises = ids.map(id => getActress(id))
+    const actresses = await Promise.all(promises)
+    return actresses
+  }
+
+  catch (error) {
+    if (error instanceof Error) {
+      console.error("errore nel recupero dati", error)
+
+    }
+    return []
+  }
+}
