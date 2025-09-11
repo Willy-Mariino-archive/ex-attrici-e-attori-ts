@@ -63,7 +63,7 @@ type Person = {
 type Actress = Person & {
   most_famous_movies: [string, string, string];
   awards: string;
-  nationality: ("American" | "British" | "Australian" | "Israeli-American" | "South African" | "French" | "Indian" | "Israeli" | "Spanish" | "South Korean" | "Chinese")
+  nationality: "American" | "British" | "Australian" | "Israeli-American" | "South African" | "French" | "Indian" | "Israeli" | "Spanish" | "South Korean" | "Chinese"
 
 }
 
@@ -73,6 +73,7 @@ function isActress(datiAttrici: unknown): datiAttrici is Actress {
   if (
     datiAttrici &&
     typeof datiAttrici === "object" &&
+    datiAttrici !== null &&
 
     "id" in datiAttrici &&
     typeof datiAttrici.id === "number" &&
@@ -91,7 +92,19 @@ function isActress(datiAttrici: unknown): datiAttrici is Actress {
 
 
     "image" in datiAttrici &&
-    typeof datiAttrici.image
+    typeof datiAttrici.image &&
+
+    "most_famous_movies" in datiAttrici &&
+    datiAttrici.most_famous_movies instanceof Array &&
+    datiAttrici.most_famous_movies.length === 3 &&
+    datiAttrici.most_famous_movies.every(movie => typeof movie === "string") &&
+
+    "awards" in datiAttrici &&
+    typeof datiAttrici.awards === "string" &&
+
+    "nationality" in datiAttrici &&
+    typeof datiAttrici.nationality === "string"
+
   ) {
     return true
   }
