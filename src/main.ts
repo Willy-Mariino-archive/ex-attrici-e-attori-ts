@@ -139,3 +139,45 @@ async function getActress(id: number): Promise<Actress | null> {
   const attrice = await getActress(1)
   console.log("dati attrice", attrice)
 })()
+
+
+// funzione per prendere tutte le attrici:
+
+async function getAllActresses(): Promise<Actress[]> {
+  try {
+
+    const response = await fetch(`http://localhost:3333/actresses`) // la type inference si occupa già di determinare che la fetch restituisce un oggetto di tipo response, quindi non devo scrivere const response: response = await fetch
+
+    if (!response.ok) {
+      throw new Error(`Errore HTTP ${response.status}: ${response.statusText}`)
+    }
+
+    const datiAttrici = await response.json()
+
+    if (!isActress(datiAttrici)) {
+      throw new Error("formato dati non valido")
+    }
+
+    return datiAttrici
+
+
+
+  }
+
+  catch (error) {
+    if (error instanceof Error) {
+      console.error("errore nel recupero dati", error) // In TypeScript, il parametro error in un catch è di tipo unknown di default. quindi anche qui occorre untype narrowing
+
+    }
+    return []
+  }
+
+  finally {
+    console.log("operazione completata")
+  }
+}
+
+(async () => {
+  const attrice = await getAllActresses()
+  console.log("dati attrice", attrice)
+})()
