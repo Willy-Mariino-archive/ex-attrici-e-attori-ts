@@ -122,7 +122,7 @@ async function getActress(id: number): Promise<Actress | null> {
       throw new Error("formato dati non valido") //questo serve perché anche se in TypeScript non ti obbliga a verificare il tipo, potresti lasciare i dati ricevuti da una fetch con tipo "any" (response.json() ritorna any di default, perché TypeScript non sa che forma avranno i dati) ma è una bad practice, perché disattiva il controllo sui tipi di TS,
       //  quindi per questo si fa il type narrowing per validare i dati ricevuti prima di restituirli, e a garantire che il tipo Actress sia effettivamente rispettato. 
       // Al contrario In JS, senza TypeScript non avresti bisogno di questo throw, perché non c’è controllo di tipo rigoroso.
-    } // Quindi, senza type narrowing, datiAttrici viene trattato come any → puoi leggere qualsiasi proprietà senza errori TS, ma perdi sicurezza dei tipi.
+    } // Riassunto: senza type narrowing, datiAttrici viene trattato come any → puoi leggere qualsiasi proprietà senza errori TS, ma perdi sicurezza dei tipi.
 
     return datiAttrici
 
@@ -210,3 +210,8 @@ async function getActresses(ids: number[]): Promise<(Actress | null)[]> {
     return []
   }
 }
+
+(async () => {
+  const attrice = await getActresses([2, 3, 4])
+  console.log("id attrici", attrice)
+})()
