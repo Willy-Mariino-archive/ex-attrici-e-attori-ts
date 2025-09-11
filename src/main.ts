@@ -67,6 +67,39 @@ type Actress = Person & {
 
 }
 
+// type narrowing per assicurarsi che la struttura dei dati sia corretta, altrimenti i json ricevuti tramite fetch sono di tipo "any" di default.
+function isActress(datiAttrici: unknown): datiAttrici is Actress {
+
+  if (
+    datiAttrici &&
+    typeof datiAttrici === "object" &&
+
+    "id" in datiAttrici &&
+    typeof datiAttrici.id === "number" &&
+
+    "name" in datiAttrici &&
+    typeof datiAttrici.name === "string" &&
+
+    "birth_year" in datiAttrici &&
+    typeof datiAttrici.birth_year === "number" &&
+
+    "death_year" in datiAttrici &&
+    typeof datiAttrici.death_year === "number" &&
+
+    "biography" in datiAttrici &&
+    typeof datiAttrici.biography &&
+
+
+    "image" in datiAttrici &&
+    typeof datiAttrici.image
+  ) {
+    return true
+  }
+  else {
+    return false
+  }
+}
+
 async function getActress(id: number): Promise<Actress | null> {
   try {
 
@@ -76,14 +109,24 @@ async function getActress(id: number): Promise<Actress | null> {
       throw new Error(`Errore HTTP ${response.status}: ${response.statusText}`)
     }
 
-    const actressDates = await response.json()
+    const datiAttrici = await response.json()
+
+    if (!isActress(datiAttrici)) {
+      throw new Error("formato dati non valido")
+    }
+
+    return datiAttrici
 
 
-    return actressDates
+
   }
 
   catch (error) {
-    console.error("errore nel recupero dati", error)
+    if (error instanceof Error) {
+      console.error("errore nel recupero dati", error) // In TypeScript, il parametro error in un catch è di tipo unknown di default. quindi anche qui occorre untype narrowing
+      return null
+    }
+
     return null
   }
 
