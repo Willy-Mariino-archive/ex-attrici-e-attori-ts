@@ -73,6 +73,8 @@ async function getActress(id: number): Promise<Actress | null> {
     const response = await fetch(`http://localhost:3333/actresses/${id}`) // la type inference si occupa già di determinare che la fetch restituisce un oggetto di tipo response, quindi non devo scrivere const response: response = await fetch
     const actressDates = await response.json()
 
+    console.log(actressDates)
+
     return actressDates
   }
 
