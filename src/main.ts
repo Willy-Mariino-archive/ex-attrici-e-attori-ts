@@ -70,8 +70,7 @@ type Actress = Person & {
 // type narrowing per assicurarsi che la struttura dei dati sia corretta, altrimenti i json ricevuti tramite fetch sono di tipo "any" di default.
 function isActress(datiAttrici: unknown): datiAttrici is Actress {
 
-  if (
-    datiAttrici &&
+  return (
     typeof datiAttrici === "object" &&
     datiAttrici !== null &&
 
@@ -105,24 +104,18 @@ function isActress(datiAttrici: unknown): datiAttrici is Actress {
     "nationality" in datiAttrici &&
     typeof datiAttrici.nationality === "string"
 
-  ) {
-    return true
-  }
-  else {
-    return false
-  }
+  )
 }
 
 async function getActress(id: number): Promise<Actress | null> {
   try {
 
     const response = await fetch(`http://localhost:3333/actresses/${id}`) // la type inference si occupa già di determinare che la fetch restituisce un oggetto di tipo response, quindi non devo scrivere const response: response = await fetch
+    const datiAttrici: unknown = await response.json()
 
     if (!response.ok) {
       throw new Error(`Errore HTTP ${response.status}: ${response.statusText}`)
     }
-
-    const datiAttrici: unknown = await response.json()
 
     if (!isActress(datiAttrici)) {
       throw new Error("formato dati non valido")
@@ -137,7 +130,8 @@ async function getActress(id: number): Promise<Actress | null> {
   catch (error) {
     if (error instanceof Error) {
       console.error("errore nel recupero dati", error) // In TypeScript, il parametro error in un catch è di tipo unknown di default. quindi anche qui occorre untype narrowing
-      return null
+    } else {
+      console.error("errore sconosciuto", error)
     }
 
     return null
@@ -167,9 +161,6 @@ async function getAllActresses(): Promise<Actress[]> {
 
     const datiAttrici: unknown = await response.json()
 
-    if (!isActress(datiAttrici)) {
-      throw new Error("formato dati non valido")
-    }
 
     if (!(datiAttrici instanceof Array)) {
       throw new Error("formato dei dati non valido, non è un array")
